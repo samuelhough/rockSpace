@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="jquery.keyhold.min.js"></script>
+<style type="text/css">
+    #gameContainer {
+        width: 500px;
+        height: 500px;
+        border: thick solid black;
+        float: left;
+    }
+    #roomContainer {
+        float: left;
+    }
+    #rooms {
+        margin-left: 15px;
+    }
+
+</style>
+</head>
+
+<body>
+    <div id="gameContainer">
+        <canvas id="stage" width="500" height="500"></canvas>
+    
+    
+    </div>
+    <div id='roomContainer'>Rooms:
+        <div id='rooms'></div>
+        <p>roomPass:<input id='pw'></input></p>
+        <p>user name:<input id='userName'></input></p>
+        <p>user password:<input id='userPass'></input></p>
+    </div>
+
+<script type="text/javascript" src="rockSpace.js"></script>
+</body>
+
+</html>
