@@ -2,7 +2,7 @@ $(document).ready(function(){
     var rockSpace = (function () {
         console.log('rockspace loaded');
     
-        var socket = io.connect('http://192.168.1.104:8000');
+        var socket = io.connect('http://localhost:8000');
         
         var canvas = document.getElementById("stage"),
             ctx = canvas.getContext("2d");  
@@ -217,6 +217,9 @@ $(document).ready(function(){
                 if(settings.ypos > canvas.height){
                     settings.ypos = -(settings.height-1);
                 }
+              //  settings.ypos = settings.ypos * Math.toFixed(4);
+              //  settings.xpos = settings.xpos * Math.toFixed(4);
+                
                 socket.emit('playerMove' , settings);
             }
             

@@ -9,7 +9,7 @@ var io           = require('socket.io'),
 app.configure(function () {
   
     app.set('port', 8000);
-    app.set('address', 'http://192.168.1.104:8000/');
+    app.set('address', 'http://localhost:8000/');
   
     //Define server directory for static content
     app.use(express.static(__dirname + '/public')); 
