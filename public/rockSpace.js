@@ -77,7 +77,7 @@ $(document).ready(function(){
     
     global_ShipThrust.onload = function(){
         init();                                          // Final Image - start program
-    }
+    };
     
     
     
@@ -105,14 +105,14 @@ $(document).ready(function(){
         // Clear the canvas on the stage
         function clearCanvas (){
             ctx.clearRect( 0, 0, canvas.width, canvas.height);
-        };
+        }
         
         // Render every ship on the stage
         function renderPlayers(){
             for( var key in shipPlayers){
                 shipPlayers[key].renderShip();
             }
-        };
+        }
         
         
         
@@ -130,7 +130,7 @@ $(document).ready(function(){
             if(global_KeyHeld[global_KeyBinds.keyCode_right] === true){
                 shipPlayers.thisPlayer.turnShip('right');            
             }
-        };     
+        }    
      
         
      
@@ -317,11 +317,11 @@ $(document).ready(function(){
         
         // Loads previous players onto the canvas
         socket.on('getPreviousPlayers', function(playerArray){
-          	for(var playerNum = 0; playerNum < playerArray.length; playerNum += 1){          
-          		var data = playerArray[playerNum];
-          		shipPlayers[data.userName] = ship( { canvasContext: ctx, userName: data.userName, startX: data.x, startY: data.y, startRotation: data.r, isInternet: true });
+            for(var playerNum = 0; playerNum < playerArray.length; playerNum += 1){          
+                var data = playerArray[playerNum];
+                shipPlayers[data.userName] = ship( { canvasContext: ctx, userName: data.userName, startX: data.x, startY: data.y, startRotation: data.r, isInternet: true });
             }
-            	
+                
         });  
         
         // Loads the ship position for a specific player
@@ -329,14 +329,14 @@ $(document).ready(function(){
             if(shipPlayers[newPosition.uN]){
                 shipPlayers[newPosition.uN].setPosition(newPosition);
             }
-            		
+                    
         });
         
         // Creates a new ship when a new player joins
         socket.on('newPlayer', function(data){
             console.log('new player joining');
             shipPlayers[data.userName] = ship( { canvasContext: ctx, userName: data.userName, startX: data.x, startY: data.y, startRotation: data.radian, isInternet: true });
-            	
+                
         });
         
         // ----------SOCKET INTERACTION ABOVE----------------- //
