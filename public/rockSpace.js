@@ -307,19 +307,33 @@ $(document).ready(function(){
             renderPlayers();
         }, 20);
         
-        // SOCKET INTERACTION BELOW //    
+        // SOCKET INTERACTION BELOW //  
+        
+        // Loads previous players onto the canvas
+        socket.on('getPreviousPlayers', function(playerArray){
+          	for(var playerNum = 0; playerNum < playerArray.length; playerNum += 1){          
+          		var data = playerArray[playerNum];
+          		shipPlayers[data.userName] = ship( { canvasContext: ctx, userName: data.userName, startX: data.x, startY: data.y, startRotation: data.r, isInternet: true });
+            }
+            	
+        });  
+        
+        // Loads the ship position for a specific player
         socket.on('getShipPosition', function(newPosition){
             if(shipPlayers[newPosition.userName]){
                 shipPlayers[newPosition.userName].setPosition(newPosition);
             }
             		
         });
+        
+        // Creates a new ship when a new player joins
         socket.on('newPlayer', function(data){
             console.log('new player joining');
             shipPlayers[data.userName] = ship( { canvasContext: ctx, userName: data.userName, startX: data.x, startY: data.y, startRotation: data.radian, isInternet: true });
             	
         });
-
+        
+        // SOCKET INTERACTION ABOVE //
     
     }
     

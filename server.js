@@ -18,56 +18,16 @@ app.configure(function () {
 app.listen(app.settings.port);
 var sio = io.listen(app);
 
-var rooms   = { 
-
-    asteroids1: { 
-        status: 'locked',
-        pw: 'join',
-        playerLim: 9,
-        curPlayer: 0,
-        players: {
-
-        }
-    
-    },
-    game2: {
-        status: 'locked',
-        pw: 'lol',
-        playerLim: 9,
-        curPlayer: 0,
-        players: {
-
-        }
-    },
-    game5: {
-        status: 'full',
-        pw: '',
-        playerLim: 9,
-        curPlayer: 0,
-        players: {
-
-        }
-    },
-    game9: {
-        status: 'open',
-        pw: '',
-        playerLim: 9,
-        curPlayer: 0,
-        players: {
-
-        }
-    
-    }
-
-}
-
-var userID  = 0;
+var players = [];
 sio.sockets.on('connection', function (socket) {
+    socket.emit('getPreviousPlayers' , players);
     
     socket.on('newPlayer', function(data){	
+        players[players.length] = data;
         socket.broadcast.emit('newPlayer', data);
     });
     socket.on('sendShipPosition', function(newPosition){
+        players[newPosition.userName] = newPosition;
         socket.broadcast.emit('getShipPosition' , newPosition);
     		
     });

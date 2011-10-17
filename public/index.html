@@ -7,8 +7,10 @@
     #gameContainer {
         width: 700px;
         height: 600px;
+        margin-left: auto;
+        margin-right: auto;
         border: thick solid black;
-        float: left;
+
         position: relative;
     }
     #bg {
@@ -18,6 +20,7 @@
         z-index: 10;
     }
     #gameContainer canvas {
+
         position: absolute;
         top: 0px;
         left: 0px;
@@ -25,8 +28,10 @@
     #roomContainer {
         float: left;
     }
-    #rooms {
-        margin-left: 15px;
+    #startGame {
+        width: 200px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
 </style>
@@ -38,9 +43,10 @@
         <canvas id="bg" width="700" height="600"></canvas>
     
     </div>
-    <div id='roomContainer'>Rooms:
-        <p>user name:<input id='userName'></input></p>
-        <p><button id="submit" value="submit">start game</input></p>
+    <p></p>
+    <div id='startGame'>
+        <p><input placeholder="Enter User Name" id='userName'></input></p>
+        <p><button id="submit" value="submit">Start Game</input></p>
     </div>
 
 <script type="text/javascript" src="background.js"></script>
