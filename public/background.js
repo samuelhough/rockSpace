@@ -7,14 +7,16 @@ $(document).ready(function(){
         console.log('Background loaded'); 
         var background = bg();
     };
-     
+    
+    // renders the background image 
     function bg(){
          var canvas = document.getElementById("bg"),
              ctx = canvas.getContext("2d"),
              bgPos = { x: 0, y: 0, width: 800, height: 600 },
              moveDirection = "left",
-             moveSpeed = -.10;
+             moveSpeed = -.20;
          
+         // move the background image slightly 
          function moveBG(){
             if((bgPos.x+bgPos.width) < (bgPos.width - canvas.width))
             {   
@@ -23,8 +25,8 @@ $(document).ready(function(){
             if((bgPos.x > (canvas.width - bgPos.width))){
                 moveDirection = "left";
             }
-            if(moveDirection === "left"){ moveSpeed = -.10; }
-            if(moveDirection === "right"){ moveSpeed = .10; }
+            if(moveDirection === "left"){ moveSpeed = -.20; }
+            if(moveDirection === "right"){ moveSpeed = .20; }
             bgPos.x += moveSpeed;
          }
         
@@ -33,6 +35,7 @@ $(document).ready(function(){
             
          } 
          
+         // Rerender the background ever 100ms
          setInterval(function(){
             moveBG();
             renderBG();

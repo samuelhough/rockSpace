@@ -56,49 +56,55 @@ $(document).ready(function(){
     
     // -----------KEYBOARD EVENT HANDLERS ABOVE----------------------- //
     
-    // Implied globals
-    var global_KeyBinds = {
-        keyCode_left: 37,
-        keyCode_right: 39,
-        keyCode_up: 38,
-        keyCode_down: 40,
-        keyCode_fire: 32
-    };
-    var global_KeyHeld = {}; // Holds a true value corresponding to a key value while it is pressed down
-    
-    // Load Asset Chain
-    var global_ShipImage = new Image(),
-        global_ShipThrust = new Image();
+    //Implied globals
+        // Key bindings for controlling the ship
+        var global_KeyBinds = {
+            keyCode_left: 37,
+            keyCode_right: 39,
+            keyCode_up: 38,
+            keyCode_down: 40,
+            keyCode_fire: 32
+        };
+        // Holds a true value corresponding to a key value while it is pressed down
+        var global_KeyHeld = {}; 
         
-    global_ShipImage.src = '/img/ship.png'; 
-    global_ShipImage.onload = function(){      
-        global_ShipThrust.src =  '/img/shipThrust.png';  // Load next image
-    };
+        // Load image asset Chain
+        var global_ShipImage = new Image(),
+            global_ShipThrust = new Image();
+            
+        global_ShipImage.src = '/img/ship.png'; 
+        global_ShipImage.onload = function(){      
+            global_ShipThrust.src =  '/img/shipThrust.png';  // Load next image
+        };
+        
+        global_ShipThrust.onload = function(){
+            init();                                          // Final Image - start program
+        };
     
-    global_ShipThrust.onload = function(){
-        init();                                          // Final Image - start program
-    };
     
     
-    
+    // Main function for rockSpace
     function game(){
+        // Used for receiving and sending all server messages and data
         var socket = io.connect('http://localhost:8000'); 
         
-        // Start Button        
+        // Start Button - creates a ship for the player after he enters a username     
         $('#submit').click(function(){
             var userName = $("#userName").val();
             createPlayer(userName);
             $(this).hide();
         });
         
-        // Game Element          
+        // Canvas Element          
         var canvas = document.getElementById("stage"),
             ctx = canvas.getContext("2d"),
             shipPlayers = {};
         
         // Create a ship for this player 
         function createPlayer(userName){
+            // Create a ship for this browser
             shipPlayers.thisPlayer = ship( { canvasContext: ctx, userName: userName, startX: 40, startY: 40, startRotation: 0, isInternet: false });
+            // Tell the other players that this browser just connected
             socket.emit('newPlayer' , { userName: userName, x: 40, y: 40, radian: 0 });
         }
         
@@ -134,12 +140,12 @@ $(document).ready(function(){
      
         
      
-        // Function which calculates each ships math for turning, rotating, and radians
+        // Function which calculates the math for ever ship on the screen regarding their turning, rotating, and movement
         function shipMath( startX, startY, newRotation, isInternet ){
             // Private variables
             var position = { x: startX, y: startY },
                 rotation = { rotationVel: 3, rotation: newRotation, radian: 0 },
-                facing = { facingX: 0, facingY: 0 },
+                facing = { facingX: 0, facingY: 0 },       
                 moving = { x: 0, y: 0 },
                 thrustAccel = 0.015,
                 dimensions = { width: 50, height: 50 },
@@ -154,6 +160,7 @@ $(document).ready(function(){
                 isThrusting: function(){
                    return isInternetThrusting;
                 },
+                // Check that this ship is within the boundarys of the canvas
                 checkBounds: function(){
                     // Make sure x positiong is within the boundary limits and if not, put ship on opposite side of the screen horizotally
                     if(position.x < (0 - (dimensions.width-1))){
@@ -239,12 +246,15 @@ $(document).ready(function(){
                 _this = this;
             
             console.log(userName);
+            
+            
             var myShip = shipMath(startX, startY, startRotation, isInternet),
                 position = myShip.updatePosition(),
                 ctx = canvasContext;
             
-            
+            //Interface
             return {
+                // Render this ship onto the canvas
                 renderShip: function(){
                     ctx.save();
                     ctx.setTransform(1,0,0,1,0,0);
@@ -277,7 +287,6 @@ $(document).ready(function(){
                     }
                     ctx.restore(); 
                     
-                    // SOCKET - Send ships current coordinates to the server
                     var sendData = { 
                         uN: userName, 
                         x: x, 
@@ -289,17 +298,21 @@ $(document).ready(function(){
                     this.sendShipPosition(sendData);
                         
                 },
+                // SOCKET - Send ships current coordinates to the server
                 sendShipPosition: function(sendData){
+                    
                     socket.emit('sendShipPosition' , sendData); 
                     
                 },
                 turnShip: function(direction){
                     myShip.turnShip(direction);
                 },
+                // Move ship forward
                 thrustShip: function(){
                     myShip.thrust();
                 
                 },
+                // Specify the x/y and radian position of this ship
                 setPosition: function(newPosition){
                     myShip.setPosition(newPosition);
                 }
@@ -313,7 +326,7 @@ $(document).ready(function(){
             renderPlayers();
         }, 20);
         
-        // ---------SOCKET INTERACTION BELOW------------------ //  
+        // ---------SOCKET SERVER INTERACTION BELOW------------------ //  
         
         // Loads previous players onto the canvas
         socket.on('getPreviousPlayers', function(playerArray){
