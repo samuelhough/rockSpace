@@ -35,7 +35,7 @@ $(document).ready(function(){
             
          } 
          
-         // Rerender the background ever 100ms
+         // Rerender the background
          setInterval(function(){
             moveBG();
             renderBG();
