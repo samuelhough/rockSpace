@@ -1,4 +1,254 @@
 $(document).ready(function(){
+    
+    var keyBinds = {
+        keyCode_left: 37,
+        keyCode_right: 39,
+        keyCode_up: 38,
+        keyCode_down: 40,
+        keyCode_fire: 32
+    };
+        
+    var keyHeld = {};
+    $(window).keydown(function(event) {   
+        switch(event.which){  
+            case keyBinds.keyCode_up:
+                keyHeld[keyBinds.keyCode_up] = true;
+                
+                event.preventDefault();
+                break;
+            case keyBinds.keyCode_down:
+                keyHeld[keyBinds.keyCode_down] = true;
+
+                event.preventDefault();
+                break;
+            case keyBinds.keyCode_left:
+                keyHeld[keyBinds.keyCode_left] = true;
+
+                event.preventDefault();
+                break;
+            case keyBinds.keyCode_right:
+                keyHeld[keyBinds.keyCode_right] = true;
+
+                event.preventDefault();
+                break;   
+            case keyBinds.keyCode_fire:
+                keyHeld[keyBinds.keyCode_fire] = true;
+                event.preventDefault();
+                break;             
+        }
+    });
+    $(window).keyup(function(event) {
+        switch(event.which){
+            case keyBinds.keyCode_up:
+                keyHeld[keyBinds.keyCode_up] = false;      
+                break;
+                
+            case keyBinds.keyCode_down:
+                keyHeld[keyBinds.keyCode_down] = false;     
+                break;
+                
+            case keyBinds.keyCode_left:
+                keyHeld[keyBinds.keyCode_left] = false;
+                break;
+                 
+            case keyBinds.keyCode_right:
+                keyHeld[keyBinds.keyCode_right] = false;
+                break;
+                 
+            case keyBinds.keyCode_fire:
+                keyHeld[keyBinds.keyCode_fire] = false;         
+                break;                
+        }
+    });
+
+    
+    function game(){
+                    
+        var canvas = document.getElementById("stage"),
+            ctx = canvas.getContext("2d"),
+            shipPlayers = {};
+        
+        shipPlayers['thisPlayer'] = ship( { canvasContext: ctx, userName: 'john', startX: 40, startY: 40, startRotation: 0 });
+        
+        var renderStage = function(){
+            ctx.clearRect( 0, 0, canvas.width, canvas.height);
+            for( var key in shipPlayers){
+                shipPlayers[key].renderShip();
+            
+            }
+        };
+        
+        var movePlayer = function(){
+            if(keyHeld[keyBinds.keyCode_up] === true){
+                shipPlayers['thisPlayer'].thrustShip();
+            }
+            if(keyHeld[keyBinds.keyCode_left] === true){
+                shipPlayers['thisPlayer'].turnShip('left');
+            }
+            if(keyHeld[keyBinds.keyCode_right] === true){
+                shipPlayers['thisPlayer'].turnShip('right');            
+            }
+        }
+        
+        var render = setInterval(function(){
+            movePlayer();
+            renderStage();
+        }, 20);
+        
+        
+        
+        function room(roomName, roomPass){
+            var roomName = roomName;
+            var roomPass = roomPass;
+            var numPlayers = 0;
+            var playerList = {};
+            return {
+                changeRoom: function(newRoom, newRoomPass){
+                    roomName = newRoom;
+                    roomPass = newRoomPass;
+                    playerList = {};
+                },
+                getRoom: function(){
+                    return roomName;
+                },
+                addPlayer: function(playerName){
+                    playerList[playerName] = true;
+                    numPlayers += 1;
+                },
+                removePlayer: function(playerName){
+                    delete playerList[playerName];
+                    numPlayers -= 1;
+                },
+                getPlayers: function(){
+                    return playerList;
+                },      
+                getNumPlayers: function(){
+                    return numPlayers;
+                }
+            }
+        
+        }
+        
+        
+        function shipMath( startX, startY, rotation ){
+            // Private variables
+            var position = { x: startX, y: startY },
+                rotation = { rotationVel: 10, rotation: rotation, radian: 0 },
+                facing = { facingX: 0, facingY: 0 },
+                moving = { x: 0, y: 0 },
+                thrustAccel = 0.35,
+                dimensions = { width: 50, height: 50 };
+            
+       
+            
+            
+            // Interface
+            return {
+                updatePosition: function(){
+                    position.x = position.x + moving.x;
+                    position.y = position.y + moving.y; 
+                    return position;
+                },
+                setPosition: function(newPositon){
+                    postion.x = newPosition.x;
+                    position.y = newPosition.y;
+                },
+                updateRotation: function(){
+                    rotation.radian = rotation.rotation * Math.PI / 180;    
+                },
+                turnShip: function(turn){
+                    if(turn === "left"){
+                        rotation.rotation -= rotation.rotationVel;
+                    
+                    }
+                    if(turn === "right"){
+                        rotation.rotation += rotation.rotationVel;
+                    }
+                    this.updateRotation();
+                },
+                getRotationRadian: function(){
+                    this.updateRotation();
+                    return rotation.radian;
+                    
+                },
+                getDimension: function(){
+                    return dimensions;
+                },
+                thrust: function(){
+                    facing.x = Math.cos(rotation.radian);
+                    facing.y = Math.sin(rotation.radian);
+                    
+                    moving.x = moving.x + thrustAccel * facing.x;
+                    moving.y = moving.y + thrustAccel * facing.y;
+                      
+                }
+                
+                
+            
+            }
+        }
+        
+        function ship(obj){
+            var canvasContext = obj.canvasContext,
+                userName = obj.userName,
+                startX = obj.startX,
+                startY = obj.startY,
+                startRotation = obj.startRotation;
+                
+            var myShip = shipMath(startX, startY, startRotation),
+                position = myShip.updatePosition(),
+                ctx = canvasContext;
+                
+            return {
+                renderShip: function(){
+                    ctx.save();
+                    ctx.setTransform(1,0,0,1,0,0);
+                    ctx.fillStyle = "rgb(200,0,0)"; 
+                    var radian = myShip.getRotationRadian(),
+                        x       = myShip.updatePosition().x,
+                        y       = myShip.updatePosition().y,
+                        transX  = x + (0.5 * myShip.getDimension().width),
+                        transY  = y + (0.5 * myShip.getDimension().height);
+                    
+                    ctx.translate(transX,transY);
+                    ctx.rotate(radian);
+                    ctx.translate(-transX,-transY);
+                    ctx.drawImage(globalShipImage, x, y);      
+                    ctx.restore();      
+                },
+                turnShip: function(direction){
+                    myShip.turnShip(direction);
+                },
+                thrustShip: function(){
+                    myShip.thrust();
+                
+                }
+            
+            
+            }
+            
+        }
+       
+        
+    }
+    
+    function init() {
+        var socket = io.connect('http://localhost:8000');
+        var newGame = game();
+    
+    }
+    
+    
+    var globalShipImage = new Image();
+        globalShipImage.src = '/img/ship.png',
+    
+    globalShipImage.onload = function(){  
+        init();
+    }
+
+});  
+
+/*    
     var rockSpace = (function () {
         console.log('rockspace loaded');
     
@@ -345,4 +595,4 @@ $(document).ready(function(){
         });
         
     })();
-});
+});*/
