@@ -71,8 +71,10 @@ sio.sockets.on('connection', function (socket) {
         socket.broadcast.emit('getShipPosition' , newPosition);
     		
     });
-   
-   
+    
+    
+    // Rooms currently disabled - need to rewrite the code to properly use them.
+
    /* var thisRoom = '';
     socket.emit('roomList', rooms);
     socket.on('leaveRoom', function(roomName){
