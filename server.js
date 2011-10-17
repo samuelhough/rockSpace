@@ -4,19 +4,19 @@ var io           = require('socket.io'),
     MemoryStore   = express.session.MemoryStore,
     parseCookie  = require('connect').utils.parseCookie,
     storesession = new MemoryStore(),
-    app          = express.createServer();
+    prog          = express.createServer();
 
-app.configure(function () {
+prog.configure(function () {
   
-    app.set('port', 8000);
-    app.set('address', 'http://localhost:8000/');
-    app.use(express.static(__dirname + '/public')); 
+    prog.set('port', 8000);
+    prog.set('address', 'http://localhost:8000/');
+    prog.use(express.static(__dirname + '/public')); 
     
     
 });
 
-app.listen(app.settings.port);
-var sio = io.listen(app);
+prog.listen(prog.settings.port);
+var sio = io.listen(prog);
 
 var players = [];
 sio.sockets.on('connection', function (socket) {
