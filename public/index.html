@@ -5,10 +5,22 @@
 <script type="text/javascript" src="jquery.keyhold.min.js"></script>
 <style type="text/css">
     #gameContainer {
-        width: 500px;
-        height: 500px;
+        width: 700px;
+        height: 600px;
         border: thick solid black;
         float: left;
+        position: relative;
+    }
+    #bg {
+        z-index: 0;
+    }
+    #stage {
+        z-index: 10;
+    }
+    #gameContainer canvas {
+        position: absolute;
+        top: 0px;
+        left: 0px;
     }
     #roomContainer {
         float: left;
@@ -22,17 +34,16 @@
 
 <body>
     <div id="gameContainer">
-        <canvas id="stage" width="500" height="500"></canvas>
-    
+        <canvas id="stage" width="700" height="600"></canvas>
+        <canvas id="bg" width="700" height="600"></canvas>
     
     </div>
     <div id='roomContainer'>Rooms:
-        <div id='rooms'></div>
-        <p>roomPass:<input id='pw'></input></p>
         <p>user name:<input id='userName'></input></p>
-        <p>user password:<input id='userPass'></input></p>
+        <p><button id="submit" value="submit">start game</input></p>
     </div>
 
+<script type="text/javascript" src="background.js"></script>
 <script type="text/javascript" src="rockSpace.js"></script>
 </body>
 

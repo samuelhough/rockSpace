@@ -1,23 +1,17 @@
 
 var io           = require('socket.io'),
     express      = require('express'),
-    MemoryStore  = express.session.MemoryStore,
+    MemoryStore   = express.session.MemoryStore,
     parseCookie  = require('connect').utils.parseCookie,
-    sessionStore = new MemoryStore(),
+    storesession = new MemoryStore(),
     app          = express.createServer();
 
 app.configure(function () {
   
     app.set('port', 8000);
     app.set('address', 'http://localhost:8000/');
-  
-    //Define server directory for static content
     app.use(express.static(__dirname + '/public')); 
     
-    app.use(express.cookieParser());
-    app.use(express.session({store: sessionStore
-        , secret: 'secret'
-        , key: 'express.sid'}));
     
 });
 
@@ -69,7 +63,17 @@ var rooms   = {
 
 var userID  = 0;
 sio.sockets.on('connection', function (socket) {
-    var thisRoom = '';
+    
+    socket.on('newPlayer', function(data){	
+        socket.broadcast.emit('newPlayer', data);
+    });
+    socket.on('sendShipPosition', function(newPosition){
+        socket.broadcast.emit('getShipPosition' , newPosition);
+    		
+    });
+   
+   
+   /* var thisRoom = '';
     socket.emit('roomList', rooms);
     socket.on('leaveRoom', function(roomName){
         console.log('leave room');
@@ -184,7 +188,7 @@ sio.sockets.on('connection', function (socket) {
     	
     		
     }); 
-
+*/
 });
 
 
