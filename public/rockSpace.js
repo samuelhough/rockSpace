@@ -277,15 +277,21 @@ $(document).ready(function(){
                     }
                     ctx.restore(); 
                     
-                    // Send ships current coordinates to the server
+                    // SOCKET - Send ships current coordinates to the server
                     var sendData = { 
-                        userName: userName, 
+                        uN: userName, 
                         x: x, 
                         y: y, 
                         r: myShip.getRotation(),
                         t: global_KeyHeld[global_KeyBinds.keyCode_up]
                     };
-                    socket.emit('sendShipPosition' , sendData);     
+                    
+                    this.sendShipPosition(sendData);
+                        
+                },
+                sendShipPosition: function(sendData){
+                    socket.emit('sendShipPosition' , sendData); 
+                    
                 },
                 turnShip: function(direction){
                     myShip.turnShip(direction);
@@ -307,7 +313,7 @@ $(document).ready(function(){
             renderPlayers();
         }, 20);
         
-        // SOCKET INTERACTION BELOW //  
+        // ---------SOCKET INTERACTION BELOW------------------ //  
         
         // Loads previous players onto the canvas
         socket.on('getPreviousPlayers', function(playerArray){
@@ -320,8 +326,8 @@ $(document).ready(function(){
         
         // Loads the ship position for a specific player
         socket.on('getShipPosition', function(newPosition){
-            if(shipPlayers[newPosition.userName]){
-                shipPlayers[newPosition.userName].setPosition(newPosition);
+            if(shipPlayers[newPosition.uN]){
+                shipPlayers[newPosition.uN].setPosition(newPosition);
             }
             		
         });
@@ -333,7 +339,7 @@ $(document).ready(function(){
             	
         });
         
-        // SOCKET INTERACTION ABOVE //
+        // ----------SOCKET INTERACTION ABOVE----------------- //
     
     }
     

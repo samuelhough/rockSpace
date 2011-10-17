@@ -33,7 +33,6 @@ $(document).ready(function(){
             
          } 
          
-         
          setInterval(function(){
             moveBG();
             renderBG();
