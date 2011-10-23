@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="/jquery-1.6.2.min.js"></script>
+<script src="/js/libs/jquery-1.6.2.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script type="text/javascript" src="jquery.keyhold.min.js"></script>
 <style type="text/css">
     #gameContainer {
         width: 700px;
@@ -42,8 +41,8 @@
     <div id="gameContainer">
         <canvas id="stage" width="700" height="600"></canvas>
         <canvas id="bg" width="700" height="600"></canvas>
-        <audio>
-            <source src="/sounds/thrust.mp3"></source>
+        <audio id="thruster">
+            <source src="/sounds/thrustersound.aiff"></source>
         </audio>
     </div>
     <p></p>
@@ -52,8 +51,11 @@
         <p><button id="submit" value="submit">Start Game</input></p>
     </div>
 
-<script type="text/javascript" src="background.js"></script>
-<script type="text/javascript" src="rockSpace.js"></script>
+<script type="text/javascript" src="/js/background.js"></script>
+<script type="text/javascript" src="/js/events.js"></script>
+<script type="text/javascript" src="/js/players.js"></script>
+<script type="text/javascript" src="/js/socket-rooms.js"></script>
+<script type="text/javascript" src="/js/rockSpace.js"></script>
 </body>
 
 </html>

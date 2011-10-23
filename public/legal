@@ -1,5 +1,8 @@
 Copyright:
-    The Javascript Code to this project is MIT Open Source 
+    The Javascript Code listed below to this project is MIT Open Source 
+        background.js
+        rockSpace.js
+        server.js
 
 Files included in this project:
     Space Ship by Oliver Schultz
@@ -9,4 +12,8 @@ Files included in this project:
     http://www.freesound.org/people/nathanshadow/sounds/22456/
     License: Sampling+ License.
     
-    Ship Image
+    NASA Hubble Space Image
+    
+    
+    Asteroid image:
+    http://www.iconfinder.com/icondetails/3362/128/kasteroids_icon
