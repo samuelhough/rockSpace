@@ -11,197 +11,183 @@ global_ShipImage.onload = function(){
 
 // Function for the ship.  A ship is created for each player connected
 function ship(obj){
-    console.log('ship called');
-    var canvasContext = obj.canvasContext,
-        socket = obj.socket,
-        canvas = obj.canvas,
-        userName = obj.userName,
-        startX = obj.startX,
-        startY = obj.startY,
-        startRotation = obj.startRotation,
-        isInternet = obj.isInternet,
-        _this = this;
+    this.ctx = obj.canvasContext;
+    this.socket = obj.socket;
+    this.canvas = obj.canvas;
+    this.userName = obj.userName;
+    this.startX = obj.startX;
+    this.startY = obj.startY;
+    this.startRotation = obj.startRotation;
+    this.isInternet = obj.isInternet;
     
-    console.log(userName);
-    
-    
-    var myShip = shipMath(startX, startY, startRotation, isInternet, canvas),
-        position = myShip.updatePosition(),
-        ctx = canvasContext;
-    
-    //Interface
-    return {
-        // Render this ship onto the canvas
-        renderShip: function(){
-            ctx.save();
-            ctx.setTransform(1,0,0,1,0,0);
-            ctx.fillStyle = "rgb(200,0,0)"; 
-            var radian = myShip.getRotationRadian(),
-                x       = myShip.updatePosition().x,
-                y       = myShip.updatePosition().y,
+    this.myShip = new shipMath(this.startX, this.startY, this.startRotation, this.isInternet, this.canvas);
+    this.position = this.myShip.updatePosition();
+      
+};
+
+ship.prototype.setPosition = function(newPosition){
+    this.myShip.setPosition(newPosition)
+} 
+ship.prototype.thrustShip = function(){
+    this.myShip.thrust();
+
+}
+ship.prototype.turnShip = function(direction){
+    this.myShip.turnShip(direction);
+}
+ship.prototype.sendShipPosition = function(sendData){          
+    this.socket.emit('sendShipPosition' , sendData); 
+            
+}
+ship.prototype.renderShip = function(){
+            this.ctx.save();
+            this.ctx.setTransform(1,0,0,1,0,0);
+            this.ctx.fillStyle = "rgb(200,0,0)"; 
+            var radian =  this.myShip.getRotationRadian(),
+                x       = this.myShip.updatePosition().x,
+                y       = this.myShip.updatePosition().y,
                 thrust  = 0,
-                transX  = x + (0.5 * myShip.getDimension().width),
-                transY  = y + (0.5 * myShip.getDimension().height);
+                transX  = x + (0.5 * this.myShip.getDimension().width),
+                transY  = y + (0.5 * this.myShip.getDimension().height);
             
             if(global_KeyHeld[global_KeyBinds.keyCode_up]) { thrust =  1; } else { thrust =  0; }
             
             
-            ctx.translate(transX,transY);
-            ctx.rotate(radian);
-            ctx.translate(-transX,-transY);
+            this.ctx.translate(transX,transY);
+            this.ctx.rotate(radian);
+            this.ctx.translate(-transX,-transY);
             
             // Check to see if this object is the player on this computer or the internet to see whether to show thrust or not
-            if(myShip.isFromInternet() === false){
+            if(this.myShip.isFromInternet() === false){
                 if(global_KeyHeld[global_KeyBinds.keyCode_up] === true){ 
                     //var audioElement = document.getElementById('thruster'); 
                     //audioElement.setAttribute('src', '/sounds/thrustersound.aiff/'); 
                     //audioElement.play();
 
-                    ctx.drawImage(global_ShipThrust, x, y);
+                    this.ctx.drawImage(global_ShipThrust, x, y);
                 } else {
                    // var audioElement = document.getElementById('thruster'); 
                    // audioElement.pause();
                    // audioElement.currentTime = 0;
                     
-                    ctx.drawImage(global_ShipImage, x, y); 
+                    this.ctx.drawImage(global_ShipImage, x, y); 
                 } 
             }
             else {
-                if(myShip.isThrusting()){
-                    ctx.drawImage(global_ShipThrust, x, y);
+                if(this.myShip.isThrusting()){
+                    this.ctx.drawImage(global_ShipThrust, x, y);
                 } else {
                    
-                    ctx.drawImage(global_ShipImage, x, y); 
+                    this.ctx.drawImage(global_ShipImage, x, y); 
                 } 
                 
             }
-            ctx.restore(); 
+            this.ctx.restore(); 
             
             var sendData = { 
-                uN: userName, 
+                uN: this.userName, 
                 x: x, 
                 y: y, 
-                r: myShip.getRotation(),
+                r: this.myShip.getRotation(),
                 t: thrust
             };
             
             this.sendShipPosition(sendData);
                 
-        },
-        // SOCKET - Send ships current coordinates to the server
-        sendShipPosition: function(sendData){
-            
-            socket.emit('sendShipPosition' , sendData); 
-            
-        },
-        turnShip: function(direction){
-            myShip.turnShip(direction);
-        },
-        // Move ship forward
-        thrustShip: function(){
-            myShip.thrust();
-        
-        },
-        // Specify the x/y and radian position of this ship
-        setPosition: function(newPosition){
-            myShip.setPosition(newPosition);
-        }
-    };       
-}
+};
+ 
  
  
  // Function which calculates the math for ever ship on the screen regarding their turning, rotating, and movement
 function shipMath( startX, startY, newRotation, isInternet, canvas){
     // Private variables
-    var position = { x: startX, y: startY },
-        rotation = { rotationVel: 3, rotation: newRotation, radian: 0 },
-        facing = { facingX: 0, facingY: 0 },       
-        moving = { x: 0, y: 0 },
-        thrustAccel = 0.015,
-        dimensions = { width: 50, height: 50 },
-        internetPlayer = isInternet,
-        isInternetThrusting = 0;
-    
-    // Interface 
-    return {
-        isFromInternet: function(){
-            return internetPlayer;
-        },
-        isThrusting: function(){
-           return isInternetThrusting;
-        },
+    this.canvas = canvas;
+    this.position = { x: startX, y: startY },
+    this.rotation = { rotationVel: 3, rotation: newRotation, radian: 0 },
+    this.facing = { facingX: 0, facingY: 0 },       
+    this.moving = { x: 0, y: 0 },
+    this.thrustAccel = 0.015,
+    this.dimensions = { width: 50, height: 50 },
+    this.internetPlayer = isInternet,
+    this.isInternetThrusting = 0;
+}
+
+shipMath.prototype.isFromInternet = function(){
+    return this.internetPlayer;
+}
+shipMath.prototype.isThrusting = function(){
+           return this.isInternetThrusting;
+}
         // Check that this ship is within the boundarys of the canvas
-        checkBounds: function(){
+shipMath.prototype.checkBounds = function(){
             // Make sure x positiong is within the boundary limits and if not, put ship on opposite side of the screen horizotally
-            if(position.x < (0 - (dimensions.width-1))){
-                position.x = (canvas.width + (dimensions.width-1));
+            if(this.position.x < (0 - (this.dimensions.width-1))){
+                this.position.x = (this.canvas.width + (this.dimensions.width-1));
             }
-            if(position.x > canvas.width + dimensions.width){
-                position.x = (0 - (dimensions.width - 1));
+            if(this.position.x > this.canvas.width + this.dimensions.width){
+                this.position.x = (0 - (this.dimensions.width - 1));
             }
             
             // Make sure the y position is within the boundary limits and if not, put ship on opposite side of the screen vertically
-            if(position.y < (0 - (dimensions.height -1))){
-                position.y = canvas.height + (dimensions.height-1);
+            if(this.position.y < (0 - (this.dimensions.height -1))){
+                this.position.y = this.canvas.height + (this.dimensions.height-1);
             }
-            if(position.y > (canvas.height + dimensions.height-1)){
-                position.y = 0 - (dimensions.height - 1);
+            if(this.position.y > (this.canvas.height + this.dimensions.height-1)){
+                this.position.y = 0 - (this.dimensions.height - 1);
             }
             
-        },
-        updatePosition: function(){
-            if(!isInternet){
-                position.x = position.x + moving.x;
-                position.y = position.y + moving.y; 
+}
+shipMath.prototype.updatePosition = function(){
+            if(!this.isInternet){
+                this.position.x = this.position.x + this.moving.x;
+                this.position.y = this.position.y + this.moving.y; 
                 
-                position.x = Math.round(position.x*10)/10; 
-                position.y = Math.round(position.y*10)/10;
+                this.position.x = Math.round(this.position.x*10)/10; 
+                this.position.y = Math.round(this.position.y*10)/10;
                 
             }
             this.checkBounds();
-            return position;
-        },
-        setPosition: function(newPosition){
-            position.x = newPosition.x;
-            position.y = newPosition.y;
-            rotation.rotation = newPosition.r;
-            isInternetThrusting = newPosition.t;
+            return this.position;
+}
+shipMath.prototype.setPosition = function(newPosition){
+            this.position.x = newPosition.x;
+            this.position.y = newPosition.y;
+            this.rotation.rotation = newPosition.r;
+            this.isInternetThrusting = newPosition.t;
 
             
             
-        },
-        updateRotation: function(){
-            rotation.radian = rotation.rotation * Math.PI / 180;    
-        },
-        turnShip: function(turn){
+}
+shipMath.prototype.updateRotation = function(){
+            this.rotation.radian = this.rotation.rotation * Math.PI / 180;    
+}
+shipMath.prototype.turnShip = function(turn){
             if(turn === "left"){
-                rotation.rotation -= rotation.rotationVel;
+                this.rotation.rotation -= this.rotation.rotationVel;
             
             }
             if(turn === "right"){
-                rotation.rotation += rotation.rotationVel;
+                this.rotation.rotation += this.rotation.rotationVel;
             }
             this.updateRotation();
-        },
-        getRotationRadian: function(){
-            this.updateRotation();
-            return rotation.radian;
-            
-        },
-        getRotation: function(){
-            return rotation.rotation;
-        },
-        getDimension: function(){
-            return dimensions;
-        },
-        thrust: function(){
-            facing.x = Math.cos(rotation.radian);
-            facing.y = Math.sin(rotation.radian);
-            
-            moving.x = moving.x + thrustAccel * facing.x;
-            moving.y = moving.y + thrustAccel * facing.y;
-              
-        }       
-    };
 }
+shipMath.prototype.getRotationRadian = function(){
+            this.updateRotation();
+            return this.rotation.radian;
+            
+}
+shipMath.prototype.getRotation = function(){
+            return this.rotation.rotation;
+}
+shipMath.prototype.getDimension = function(){
+            return this.dimensions;
+}
+shipMath.prototype.thrust = function(){
+            this.facing.x = Math.cos(this.rotation.radian);
+            this.facing.y = Math.sin(this.rotation.radian);
+            
+            this.moving.x = this.moving.x + this.thrustAccel * this.facing.x;
+            this.moving.y = this.moving.y + this.thrustAccel * this.facing.y;
+              
+}      
 

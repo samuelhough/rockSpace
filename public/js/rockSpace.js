@@ -49,7 +49,7 @@ $(document).ready(function(){
                     startRotation: data.r, 
                     isInternet: true 
                 };
-                shipPlayers[data.userName] = ship(newShip);
+                shipPlayers[data.userName] = new ship(newShip);
             } else {
                 var newShip = {
                     socket: socket, 
@@ -61,7 +61,7 @@ $(document).ready(function(){
                     startRotation: 0, 
                     isInternet: false
                 };
-                shipPlayers.thisPlayer = ship(newShip);
+                shipPlayers.thisPlayer = new ship(newShip);
             }
 
         

@@ -21,6 +21,8 @@ var sio = io.listen(prog);
 var canvas = { width: 700, height: 600 }
 
 var players = [];
+
+
 var rocks = {
     rockList: [],
     main: function(){
@@ -53,13 +55,13 @@ var rocks = {
                     dir: function(){
                         if(Math.random() > .51){ return 1 } else { return -1 }
                     },
-                    speed: 0.5,
+                    speed: 0.1,
                     x: 20, 
                     y: 20,
                     dx: 0,
                     dy: 0,
                     r: 0,
-                    rotationSpeed: 0.1,
+                    rotationSpeed: 0.01,
                     update: function(){
                         this.r += this.rotationSpeed;
                         this.x += this.dx;
