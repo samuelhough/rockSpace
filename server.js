@@ -26,7 +26,7 @@ var players = [];
 var rocks = {
     rockList: [],
     main: function(){
-        this.createRocks(10);
+        this.createRocks(15);
 
     },
     getRocks: function(){
@@ -44,6 +44,7 @@ var rocks = {
             var newRock = {
                 position: { 
                     init: function(){
+                        this.speed = Math.random() * 1;
                         this.x = Math.random() * canvas.width;
                         this.y = Math.random() * canvas.height;
                         this.dx = (Math.random() * this.dir() * this.speed)+this.dir()*this.speed;
