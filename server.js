@@ -4,7 +4,8 @@ var io           = require('socket.io'),
     MemoryStore   = express.session.MemoryStore,
     parseCookie  = require('connect').utils.parseCookie,
     storesession = new MemoryStore(),
-    prog          = express.createServer();
+    prog          = express.createServer(),
+    rocks       = require('rockSpace');
 
 prog.configure(function () {
   
@@ -22,76 +23,6 @@ var canvas = { width: 700, height: 600 }
 
 var players = [];
 
-
-var rocks = {
-    rockList: [],
-    main: function(){
-        this.createRocks(15);
-
-    },
-    getRocks: function(){
-        this.updateRockPos();
-        var sendRocks = [];
-        var rockNum = this.rockList.length;
-        for(var cur = 0; cur < rockNum; cur += 1){
-            var thisRock = this.rockList[cur].position.simplePos();
-            sendRocks.push(thisRock);
-        }
-        return sendRocks;
-    },
-    createRocks: function(num){
-        for( var amt = 0; amt < num; amt += 1){
-            var newRock = {
-                position: { 
-                    init: function(){
-                        this.speed = Math.random() * 1;
-                        this.x = Math.random() * canvas.width;
-                        this.y = Math.random() * canvas.height;
-                        this.dx = (Math.random() * this.dir() * this.speed)+this.dir()*this.speed;
-                        this.dy = (Math.random() * this.dir() * this.speed)+this.dir()*this.speed;
-                        this.rotationSpeed = Math.random() * 5 * this.dir();
-                    },
-                    width: 50,
-                    height: 50,
-                    dir: function(){
-                        if(Math.random() > .51){ return 1 } else { return -1 }
-                    },
-                    speed: 0.1,
-                    x: 20, 
-                    y: 20,
-                    dx: 0,
-                    dy: 0,
-                    r: 0,
-                    rotationSpeed: 0.01,
-                    update: function(){
-                        this.r += this.rotationSpeed;
-                        this.x += this.dx;
-                        this.y += this.dy;
-                        this.x = Math.round(this.x*100)/100;
-                        this.y = Math.round(this.y*100)/100;
-                        this.r = Math.round(this.r*10)/10;
-                        if(this.x < (-this.width) ){ this.x = canvas.width + this.width -1;  }
-                        if(this.x > canvas.width + this.width -1){ this.x = -this.width + 1;  }
-                        if(this.y < -this.height ){ this.y = canvas.height + this.height - 1; }
-                        if(this.y > canvas.height + this.height - 1){ this.y = -this.height + 1;  }
-                        
-                    },
-                    simplePos: function(){ return { x: this.x, y: this.y, r: this.r }; }
-                },
-                
-            }
-            newRock.position.init();
-            this.rockList.push(newRock);
-        }
-    },
-    updateRockPos: function(){
-        for( var rockNum = 0; rockNum < this.rockList.length; rockNum += 1){
-            var tempRock = this.rockList[rockNum];
-            tempRock.position.update();
-        }
-    }
-};
-rocks.main();
 
 sio.sockets.on('connection', function (socket) {
     socket.emit('getPreviousPlayers' , players);
