@@ -103,10 +103,10 @@ function shipMath( startX, startY, newRotation, isInternet, canvas){
     // Private variables
     this.canvas = canvas;
     this.position = { x: startX, y: startY },
-    this.rotation = { rotationVel: 3, rotation: newRotation, radian: 0 },
+    this.rotation = { rotationVel: 6, rotation: newRotation, radian: 0 },
     this.facing = { facingX: 0, facingY: 0 },       
     this.moving = { x: 0, y: 0 },
-    this.thrustAccel = 0.015,
+    this.thrustAccel = 0.035,
     this.dimensions = { width: 50, height: 50 },
     this.internetPlayer = isInternet,
     this.isInternetThrusting = 0;
