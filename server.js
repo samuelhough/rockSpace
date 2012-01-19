@@ -21,114 +21,15 @@ var sio = io.listen(prog);
 var canvas = { width: 700, height: 600 }
 
 var players = [];
-
-
-var mongodb = require('mongodb');
-var server = new mongodb.Server("127.0.0.1", 27017, {});
-
-new mongodb.Db('test', server, {}).open(function (error, client) {
-    if (error) throw error;
-    
-    var collection = new mongodb.Collection(client, 'test_collection');
-    
-
-    
-    collection.find({}, {limit:10}).toArray(function(err, docs) {
-        console.dir(docs);
-    });
   
-    sio.sockets.on('connection', function (socket) {
-    	socket.emit('getPreviousPlayers' , players);
-    	
-    	socket.on('newPlayer', function(data){	
-    		players[players.length] = data;
-    		socket.broadcast.emit('newPlayer', data);
-    		
-            collection.insert({user: 'newUser'}, {safe:true}, function(err, objects) {
-                if (err) console.warn(err.message);
-                if (err && err.message.indexOf('E11000 ') !== -1) {
-                  // this _id was already inserted in the database
-                }
-            });
-            collection.find({}, {limit:10}).toArray(function(err, docs) {
-                console.dir(docs);
-            });
-            
-            /*
-                search by subfield
-                collection.find({"field.subfield": "value"});
-                
-                special querys $gt $gte $lt $lte $not
-                
-                collection.find({$exists : {"age": 1}});
-                
-                skips first 10, and returns 5
-                    collection.find({age:40).skip(10).limit(5)
-                    - skip does the query and then scans through that many querys - skip is proessor heavy.  
-                        has to iterate through the list from the beginning
-                        
-                .sort() to change the ordering of result set like sql ORDERBY
-                    collection.find().sort({ts: -1});
-                    
-                query everything but return only name and age
-                    collection.find({}, {name:1, age:1 });
-                    to return everything without a value
-                    collection.find({}, {name: 0}); // returns everthing but the name element
-                    
-                Find documents where "name" = "alice"< and incrememnt ists value for "age" by 1
-                    collection.update({name:"Alice"}, {$inc: {"age":1}});
-                
-                updates with mongo:
-                    if the document matching the query is found, apply the modifier
-                    if its not foudn, create  the document by applying modifiers to the query,a nd inserting it.
-                    will only insert a single document                
-                
-                // collection is empty
-                    collection.update({title}: "lor"}, {"$inc":{view":1}, true);
-                    //collection now contains new doc {title: "lor", views: 1}
-                
-                
-                
-                Mongo has the option of oing safe writes.  If safe is set to true, the callback is not called unless the server says it went through
-                
-                collection.insert({x:1}, {safe:true}, function(){
-                
-                });
-                
-                
-                
-                ///////////
-                Look into mongoose it allows to make the data calls much simpler
-                
-                
-                Sharding in Mongo
-                    MongoS = Sharding Program
-                    MongoS goes in between application and database
-                
-                Replication
-                    
-                
-                MapReduce
-                    
-                GridFS
-                    store large binary blobs - store larger than 16mb - store video / images - files up to 2 gb per doc
-                
-                MMS
-                    MongoMonitoringService - agent that runs on the mongo service and monitors the cluster and sends pings back to mms
-                    
-                
-                Capped Collections
-                    collection with a fixed size = push and and shift a doc
-                
-                
-                
-                
-                
-                    
-            
-            
-            */
-    		
+sio.sockets.on('connection', function (socket) {
+	socket.emit('getPreviousPlayers' , players);
+	
+	socket.on('newPlayer', function(data){	
+		players[players.length] = data;
+		socket.broadcast.emit('newPlayer', data);
+        
+               		
     	});
     	socket.on('sendShipPosition', function(newPosition){
     		players[newPosition.userName] = newPosition;
