@@ -9,8 +9,8 @@ var io			 = require('socket.io'),
 	Db			 = require('mongodb');
 
 prog.configure(function () { 
-	prog.set('port', 8000);
-	prog.set('address', 'http://localhost:8000/');
+	prog.set('port', 13833);
+	prog.set('address', 'http://rockspace.nodester.com/');
 	prog.use(express.static(__dirname + '/public')); 
 	
 });
