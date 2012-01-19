@@ -10,7 +10,7 @@ var io			 = require('socket.io'),
 
 prog.configure(function () { 
 	prog.set('port', 13833);
-	prog.set('address', 'http://rockspace.nodester.com/');
+	//prog.set('address', 'http://rockspace.nodester.com/');
 	prog.use(express.static(__dirname + '/public')); 
 	
 });
